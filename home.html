@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trip Price Calculator</title>
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <h1 class="page-title">LEISURE QUOTE MODULE</h1>
+    <div class="form-container">
+      <form>
+        <div id="circuit-container">
+          <label for="circuit">Select Circuit:</label>
+          <select id="circuit" name="circuit" onchange="updateCities()">
+            <option value="Himachal">Himachal</option>
+            <option value="Uttranchal">Uttranchal</option>
+            <option value="Kerala">Kerala</option>
+            <option value="South">South</option>
+            <option value="NorthKerala">North Kerala</option>
+            <option value="Kashmir">Kashmir</option>
+            <option value="GangtokDarjeeling">Gangtok & Darjeeling</option>
+            <option value="Goa">Goa</option>
+            <option value="GoldenTriangle">Golden Triangle</option>
+          </select>
+        </div>
+
+        <div id="cities">
+          <div class="city-nights-wrapper">
+            <div class="city-dropdown">
+              <label for="city1">City 1:</label>
+              <select id="city1" name="city"></select>
+            </div>
+            <div class="nights-dropdown">
+              <label for="nights1">Number of Nights:</label>
+              <input
+                type="number"
+                id="nights1"
+                name="nights"
+                min="1"
+                value="1"
+              />
+            </div>
+          </div>
+          <div class="hotel-dropdown">
+            <label for="hotel-star">Hotel Star Rating:</label>
+            <select id="hotel-star" name="hotel-star">
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="button" onclick="addNewCityOption()">
+          <i class="fas fa-plus"></i>Add City
+        </button>
+        <br />
+        <script src="cityDropdown.js"></script>
+        <div class="tooltip">
+          <label for="adults">Number of Adults:</label>
+          <span class="tooltiptext">Adults are aged 12 and above</span>
+        </div>
+        <input type="number" id="adults" name="adults" min="1" required /><br />
+
+        <div class="tooltip">
+          <label for="CWB">Number of CWB:</label>
+          <span class="tooltiptext">Children With Bed</span>
+        </div>
+        <input type="number" id="CWB" name="CWB" min="0" required /><br />
+
+        <div class="tooltip">
+          <label for="CWOB">Number of CWOB:</label>
+          <span class="tooltiptext">Children Without Bed</span>
+        </div>
+        <input type="number" id="CWOB" name="CWOB" min="0" required /><br />
+
+        <div class="tooltip">
+          <label for="Extra Adults">Number of Extra Adults:</label>
+          <span class="tooltiptext">Additional adults</span>
+        </div>
+        <input
+          type="number"
+          id="Extra Adults"
+          name="Extra Adults"
+          min="0"
+          required
+        /><br />
+
+        <label for="vehicle">Vehicle:</label>
+        <select id="vehicle" name="vehicle">
+          <option value="Sedan">Sedan</option>
+          <option value="Innova">Innova</option>
+          <option value="12 seater tempo">12 seater tempo</option>
+        </select>
+        <br />
+
+        <button type="button" id="submit-btn">
+          <i class="fas fa-calculator"></i>Calculate Price
+        </button>
+        <div id="output"></div>
+
+        <div id="results" class="results-box">
+          <p id="final-price"></p>
+          <p id="final-adult-price"></p>
+          <p id="final-cwb-price"></p>
+          <p id="final-cwob-price"></p>
+          <p id="final-extra-adult-price"></p>
+        </div>
+
+        <script src="calculator.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+        <button type="button" id="download-pdf-btn">
+          <i class="fas fa-file-download"></i>Download PDF
+        </button>
+      </form>
+    </div>
+
+    <script>
+      // Define the circuits and corresponding cities
+      const circuits = {
+        Himachal: [
+          "Shimla",
+          "Manali",
+          "Dharamshala",
+          "Dalhousie",
+          "Amritsar",
+          "Chandigarh",
+          "Delhi",
+        ],
+        Uttranchal: [
+          "Nainital",
+          "Corbett",
+          "Kausani",
+          "Mussoorie",
+          "Rishikesh",
+          "Haridwar",
+          "Ranikhet",
+          "Delhi",
+        ],
+        Kerala: [
+          "Cochin",
+          "Munnar",
+          "Alleppey",
+          "Thekkady",
+          "Kumarakom",
+          "Kovalam",
+        ],
+        South: [
+          "Bangalore",
+          "Mysore",
+          "Ooty",
+          "Kodaikanal",
+          "Madhurai",
+          "Rameshwaram",
+          "Tirupati",
+          "Chennai",
+          "Mabalipuram",
+          "Pondicherry",
+        ],
+        NorthKerala: ["Coorg", "Wayanad", "Vythiri"],
+        Kashmir: [
+          "Srinagar",
+          "Gulmarg",
+          "Pahalgam",
+          "Patnitop",
+          "Jammu",
+          "Katra",
+        ],
+        GangtokDarjeeling: [
+          "Gangtok",
+          "Darjeeling",
+          "Pelling",
+          "Kalimpong",
+          "Lachung",
+        ],
+        Goa: ["Goa"],
+        GoldenTriangle: ["Delhi", "Agra", "Jaipur"],
+      };
+
+      // Function to update city dropdown based on selected circuit
+      function updateCities() {
+        const circuit = document.getElementById("circuit").value;
+        const cityDropdown = document.getElementById("city1");
+        const cities = circuits[circuit] || [];
+
+        // Clear previous options
+        cityDropdown.innerHTML = "";
+
+        // Add new options for cities
+        cities.forEach((city) => {
+          const option = document.createElement("option");
+          option.value = city;
+          option.textContent = city;
+          cityDropdown.appendChild(option);
+        });
+      }
+
+      // Initial population of cities for the first circuit (Himachal)
+      window.onload = updateCities;
+    </script>
+    const BACKEND_URL = "https://leisure-backend.onrender.com"; // ✅ Your
+    backend URL
+    <script>
+      window.onbeforeunload = function () {
+        // Send a request to the server to log out the user when the window is closed
+        fetch(`${BACKEND_URL}/logout`, { method: "GET" });
+      };
+    </script>
+  </body>
+</html>
