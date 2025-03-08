@@ -242,7 +242,6 @@ function getFinalPrices() {
 }
 
 // PDF generation logic
-// PDF generation logic (updated)
 document
   .getElementById("download-pdf-btn")
   .addEventListener("click", async function () {
@@ -263,23 +262,16 @@ document
         },
         credentials: "include",
       });
-    
+
       if (!userResponse.ok) throw new Error("Failed to fetch user data");
-    
+
       const { username, phone, designation } = await userResponse.json();
-    
       console.log("User Details:", { username, phone, designation });
-    
-    } catch (error) {
-      console.error("Error fetching user details:", error);
-      alert("Failed to fetch user details. Please try again.");
-    }
-    
 
-      if (!userResponse.ok) throw new Error("Failed to fetch user data");
-      if (!prices) return;
+      // Fetch final prices
+      const prices = getFinalPrices();
+      if (!prices) return; // <-- Correct placement
 
-      const { username, phone, designation } = await userResponse.json();
       const {
         totalAdultCost,
         totalCwbCost,
@@ -296,6 +288,7 @@ document
 
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
+
       // Get circuit value safely
       const circuitElement = document.getElementById("circuit");
       const circuit = circuitElement ? String(circuitElement.value).trim() : "";
@@ -387,93 +380,19 @@ document
         `No of pax: ${adults + extraAdults} adults + ${cwb + cwob} kids`
       );
       yOffset += 10;
-
       doc.text(20, yOffset, `Stay: ${totalNights} nights`);
       yOffset += 10;
 
-      // Dynamic pricing sections
-      const addPriceSection = (condition, text) => {
-        if (condition) {
-          doc.text(20, yOffset, text);
-          yOffset += 10;
-        }
-      };
-
-      addPriceSection(
-        adults > 0,
-        `Adult Price: Rs. ${totalAdultCost.toFixed(2)}/- per person`
-      );
-
-      addPriceSection(
-        extraAdults > 0,
-        `Extra Adult Price: Rs. ${totalExtraAdultCost.toFixed(2)}/- per person`
-      );
-
-      addPriceSection(
-        cwb > 0,
-        `Child with bed (CWB): Rs. ${totalCwbCost.toFixed(2)}/- per person`
-      );
-
-      addPriceSection(
-        cwob > 0,
-        `Child without bed (CWOB): Rs. ${totalCwobCost.toFixed(2)}/- per person`
-      );
-
-      // Package includes
-      doc.setFont("Helvetica", "bold");
-      doc.text(20, yOffset, "Package includes:");
-      yOffset += 10;
-
-      cities.forEach((city, index) => {
-        doc.setFont("Helvetica", "normal");
-        doc.text(
-          20,
-          yOffset,
-          `${city.nights} nights ${
-            city.city.charAt(0).toUpperCase() + city.city.slice(1)
-          } in Hotel ${hotelNames[index]} or similar`
-        );
-        yOffset += 7;
-      });
-
-      doc.text(20, yOffset, `Transportation by ${vehicle}`);
-      yOffset += 7;
-      doc.text(20, yOffset, "Sightseeing as per given itinerary");
-      yOffset += 10;
-
-      // Terms and conditions
-      doc.setFont("Helvetica", "bold");
-      doc.text(20, yOffset, "Note:");
-      yOffset += 7;
-
-      doc.setFont("Helvetica", "normal");
-      const notes = [
-        "Above costing is based on base category of the room at the mentioned hotels.",
-        "Does not include:",
-        "• Anything not mentioned in inclusions",
-        "• GST @ 5%",
-        "• Trainfare/Airfare",
-        "• Other terms as per company policy",
-      ];
-
-      notes.forEach((note) => {
-        doc.text(20, yOffset, note);
-        yOffset += 7;
-      });
-
       // Contact information
       yOffset += 7;
-      // Convert values to strings before passing them to jsPDF.text()
       doc.text(20, yOffset, `For more information, contact:`);
       yOffset += 7;
 
-      doc.text(20, yOffset, String(username || "N/A")); // Ensure username is a string
+      doc.text(20, yOffset, String(username || "N/A"));
       yOffset += 7;
-
-      doc.text(20, yOffset, String(designation || "N/A")); // Ensure designation is a string
+      doc.text(20, yOffset, String(designation || "N/A"));
       yOffset += 7;
-
-      doc.text(20, yOffset, String(phone || "N/A")); // Ensure phone is a string
+      doc.text(20, yOffset, String(phone || "N/A"));
 
       doc.save("Tour_Package_Quotation.pdf");
     } catch (error) {
