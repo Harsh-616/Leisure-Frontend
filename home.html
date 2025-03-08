@@ -209,13 +209,13 @@
       // Initial population of cities for the first circuit (Himachal)
       window.onload = updateCities;
     </script>
-    const BACKEND_URL = "https://leisure-backend.onrender.com"; // ✅ Your
-    backend URL
+
     <script>
-      window.onbeforeunload = function () {
-        // Send a request to the server to log out the user when the window is closed
-        fetch(`${BACKEND_URL}/logout`, { method: "GET" });
-      };
+        window.onbeforeunload = function () {
+          // Send a request to the server to log out the user when the window is closed
+          const BACKEND_URL = "https://leisure-backend.onrender.com"; // ✅ Yourbackend URL
+          fetch(`${BACKEND_URL}/logout`, { method: "GET" });
+        };
     </script>
   </body>
 </html>
