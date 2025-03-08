@@ -287,6 +287,14 @@ document
 
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
+      // Get circuit value safely
+      const circuitElement = document.getElementById("circuit");
+      const circuit = circuitElement ? String(circuitElement.value).trim() : "";
+
+      // Normalize the circuit name
+      const normalizedCircuit = circuit.toLowerCase();
+
+      // Banner Map with correct mappings
       const bannerMap = {
         "golden triangle": "GoldenTraingle-banner.png",
         "gangtok & darjeeling": "GangtokDarjeeling-banner.png",
@@ -299,11 +307,12 @@ document
         uttranchal: "Uttranchal-banner.png",
       };
 
-      // Normalize the circuit name and look up in the banner map
-      const normalizedCircuit = circuit.toLowerCase().trim();
+      // Ensure a valid banner filename or use a fallback image
       const bannerFileName =
-        bannerMap[normalizedCircuit] || "default-banner.png"; // Use a fallback if not found
+        bannerMap[normalizedCircuit] || "default-banner.png";
       const bannerImageUrl = `banner/${bannerFileName}`;
+
+      console.log("Banner Image Path:", bannerImageUrl);
 
       const logoUrl = "logo.jpeg";
       let yOffset = 10;
