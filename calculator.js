@@ -454,13 +454,17 @@ document
 
       // Contact information
       yOffset += 7;
-      doc.text(20, yOffset, "For more information, contact:");
+      // Convert values to strings before passing them to jsPDF.text()
+      doc.text(20, yOffset, `For more information, contact:`);
       yOffset += 7;
-      doc.text(20, yOffset, username);
+
+      doc.text(20, yOffset, String(username || "N/A")); // Ensure username is a string
       yOffset += 7;
-      doc.text(20, yOffset, designation);
+
+      doc.text(20, yOffset, String(designation || "N/A")); // Ensure designation is a string
       yOffset += 7;
-      doc.text(20, yOffset, phone);
+
+      doc.text(20, yOffset, String(phone || "N/A")); // Ensure phone is a string
 
       doc.save("Tour_Package_Quotation.pdf");
     } catch (error) {
