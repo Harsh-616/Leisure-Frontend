@@ -70,7 +70,7 @@ document
     }
 
     try {
-      const response = await fetch("${BACKEND_URL}/get-data", {
+      const response = await fetch('${BACKEND_URL}/get-data', {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`, // Pass JWT token
@@ -256,7 +256,7 @@ document
     try {
       // Fetch user data and prices simultaneously
       const [userResponse, prices] = await Promise.all([
-        fetch("${BACKEND_URL}/get-user-data", {
+        fetch('${BACKEND_URL}/get-user-data', {
           headers: { "Content-Type": "application/json",
       Authorization: `Bearer ${sessionStorage.getItem("token")}` },
       credentials: "include"
