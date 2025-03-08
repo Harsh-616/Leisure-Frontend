@@ -287,8 +287,24 @@ document
 
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
-      const circuit = document.getElementById("circuit").value;
-      const bannerImageUrl = `banner/${circuit.toLowerCase()}-banner.png`;
+      const bannerMap = {
+        "golden triangle": "GoldenTraingle-banner.png",
+        "gangtok & darjeeling": "GangtokDarjeeling-banner.png",
+        goa: "Goa-banner.png",
+        himachal: "Himachal-banner.png",
+        kashmir: "Kashmir-banner.png",
+        kerala: "Kerala-banner.png",
+        "north kerala": "NorthKerala-banner.png",
+        south: "South-banner.png",
+        uttranchal: "Uttranchal-banner.png",
+      };
+
+      // Normalize the circuit name and look up in the banner map
+      const normalizedCircuit = circuit.toLowerCase().trim();
+      const bannerFileName =
+        bannerMap[normalizedCircuit] || "default-banner.png"; // Use a fallback if not found
+      const bannerImageUrl = `banner/${bannerFileName}`;
+
       const logoUrl = "logo.jpeg";
       let yOffset = 10;
 
