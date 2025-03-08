@@ -75,7 +75,7 @@ document
         headers: {
           Authorization: `Bearer ${token}`, // Pass JWT token
         },
-        credentials: "include"
+        credentials: "include",
       });
 
       if (!response.ok) {
@@ -147,10 +147,10 @@ function calculatePrices(
       const cityCwbRate = parseFloat(cityData["CWB"]) || 0;
       const cityCwobRate = parseFloat(cityData["CWOB"]) || 0;
 
-      totalAdultCost += adultRate * nights * (adults || 0);
-      totalCwbCost += cityCwbRate * nights * (cwb || 0);
-      totalCwobCost += cityCwobRate * nights * (cwob || 0);
-      totalExtraAdultCost += extraAdultRate * nights * (extraAdults || 0);
+      totalAdultCost += adults > 0 ? adultRate * nights : 0;
+      totalCwbCost += cwb > 0 ? cityCwbRate * nights : 0;
+      totalCwobCost += cwob > 0 ? cityCwobRate * nights : 0;
+      totalExtraAdultCost += extraAdults > 0 ? extraAdultRate * nights : 0;
     }
   });
 
@@ -167,7 +167,8 @@ function calculatePrices(
   let vehiclePerPersonCost = 0;
   if (vehicleData) {
     const vehicleRate = parseFloat(vehicleData["Rate"]) || 0;
-    vehiclePerPersonCost = (vehicleRate * totalDays + 1) / Math.max(1, adults);
+    vehiclePerPersonCost =
+      (vehicleRate * (totalDays + 1)) / Math.max(1, adults);
   }
 
   totalAdultCost += vehiclePerPersonCost;
@@ -257,9 +258,11 @@ document
       // Fetch user data and prices simultaneously
       const [userResponse, prices] = await Promise.all([
         fetch(`${BACKEND_URL}/get-data`, {
-          headers: { "Content-Type": "application/json",
-      Authorization: `Bearer ${sessionStorage.getItem("token")}` },
-      credentials: "include"
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+          },
+          credentials: "include",
         }),
         getFinalPrices(),
       ]);
