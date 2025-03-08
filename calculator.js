@@ -75,6 +75,7 @@ document
         headers: {
           Authorization: `Bearer ${token}`, // Pass JWT token
         },
+        credentials: "include"
       });
 
       if (!response.ok) {
@@ -256,7 +257,9 @@ document
       // Fetch user data and prices simultaneously
       const [userResponse, prices] = await Promise.all([
         fetch("${BACKEND_URL}/get-user-data", {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { "Content-Type": "application/json",
+      Authorization: `Bearer ${sessionStorage.getItem("token")}` },
+      credentials: "include"
         }),
         getFinalPrices(),
       ]);
