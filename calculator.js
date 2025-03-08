@@ -255,17 +255,26 @@ document
     }
 
     try {
-      // Fetch user data and prices simultaneously
-      const [userResponse, prices] = await Promise.all([
-        fetch(`${BACKEND_URL}/get-data`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-          },
-          credentials: "include",
-        }),
-        getFinalPrices(),
-      ]);
+      // Fetch only user details
+      const userResponse = await fetch(`${BACKEND_URL}/get-user-data`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+        credentials: "include",
+      });
+    
+      if (!userResponse.ok) throw new Error("Failed to fetch user data");
+    
+      const { username, phone, designation } = await userResponse.json();
+    
+      console.log("User Details:", { username, phone, designation });
+    
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+      alert("Failed to fetch user details. Please try again.");
+    }
+    
 
       if (!userResponse.ok) throw new Error("Failed to fetch user data");
       if (!prices) return;
