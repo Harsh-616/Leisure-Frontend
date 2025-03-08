@@ -242,6 +242,18 @@ function getFinalPrices() {
 }
 
 // PDF generation logic
+// Define the getFinalPrices function to return the final calculated prices
+function getFinalPrices() {
+  if (!window.finalPrices || Object.keys(window.finalPrices).length === 0) {
+    alert(
+      "Prices have not been calculated yet. Please calculate prices first."
+    );
+    return null;
+  }
+  return window.finalPrices;
+}
+
+// PDF generation logic
 document
   .getElementById("download-pdf-btn")
   .addEventListener("click", async function () {
@@ -268,9 +280,9 @@ document
       const { username, phone, designation } = await userResponse.json();
       console.log("User Details:", { username, phone, designation });
 
-      // Fetch final prices
+      // Get final prices
       const prices = getFinalPrices();
-      if (!prices) return; // <-- Correct placement
+      if (!prices) return;
 
       const {
         totalAdultCost,
@@ -383,11 +395,77 @@ document
       doc.text(20, yOffset, `Stay: ${totalNights} nights`);
       yOffset += 10;
 
-      // Contact information
+      // Dynamic pricing sections
+      const addPriceSection = (condition, text) => {
+        if (condition) {
+          doc.text(20, yOffset, text);
+          yOffset += 10;
+        }
+      };
+
+      addPriceSection(
+        adults > 0,
+        `Adult Price: Rs. ${totalAdultCost.toFixed(2)}/- per person`
+      );
+      addPriceSection(
+        extraAdults > 0,
+        `Extra Adult Price: Rs. ${totalExtraAdultCost.toFixed(2)}/- per person`
+      );
+      addPriceSection(
+        cwb > 0,
+        `Child with bed (CWB): Rs. ${totalCwbCost.toFixed(2)}/- per person`
+      );
+      addPriceSection(
+        cwob > 0,
+        `Child without bed (CWOB): Rs. ${totalCwobCost.toFixed(2)}/- per person`
+      );
+
+      // Package includes
+      doc.setFont("Helvetica", "bold");
+      doc.text(20, yOffset, "Package includes:");
+      yOffset += 10;
+
+      cities.forEach((city, index) => {
+        doc.setFont("Helvetica", "normal");
+        doc.text(
+          20,
+          yOffset,
+          `${city.nights} nights ${
+            city.city.charAt(0).toUpperCase() + city.city.slice(1)
+          } in Hotel ${hotelNames[index]} or similar`
+        );
+        yOffset += 7;
+      });
+
+      doc.text(20, yOffset, `Transportation by ${vehicle}`);
       yOffset += 7;
-      doc.text(20, yOffset, `For more information, contact:`);
+      doc.text(20, yOffset, "Sightseeing as per given itinerary");
+      yOffset += 10;
+
+      // Terms and conditions
+      doc.setFont("Helvetica", "bold");
+      doc.text(20, yOffset, "Note:");
       yOffset += 7;
 
+      doc.setFont("Helvetica", "normal");
+      const notes = [
+        "Above costing is based on base category of the room at the mentioned hotels.",
+        "Does not include:",
+        "• Anything not mentioned in inclusions",
+        "• GST @ 5%",
+        "• Trainfare/Airfare",
+        "• Other terms as per company policy",
+      ];
+
+      notes.forEach((note) => {
+        doc.text(20, yOffset, note);
+        yOffset += 7;
+      });
+
+      // Contact information
+      yOffset += 7;
+      doc.text(20, yOffset, "For more information, contact:");
+      yOffset += 7;
       doc.text(20, yOffset, String(username || "N/A"));
       yOffset += 7;
       doc.text(20, yOffset, String(designation || "N/A"));
