@@ -50,6 +50,8 @@ document
     const extraAdults = parseInt(document.getElementById("Extra Adults").value);
     const vehicle = document.getElementById("vehicle").value;
     const circuit = document.getElementById("circuit").value;
+    const markup = parseFloat(document.getElementById("markup").value) || 0;
+
 
     console.log("Form Data:", {
       cities,
@@ -91,7 +93,8 @@ document
         cwob,
         extraAdults,
         vehicle,
-        circuit
+        circuit,
+        markup
       );
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -108,7 +111,8 @@ function calculatePrices(
   cwob,
   extraAdults,
   vehicle,
-  circuit
+  circuit,
+  markup
 ) {
   const headers = data[0];
   const jsonDataArr = data.slice(1).map((row) => {
@@ -171,16 +175,9 @@ function calculatePrices(
       (vehicleRate * (totalDays + 1)) / Math.max(1, adults);
   }
 
-  totalAdultCost += vehiclePerPersonCost;
-  if (totalAdultCost <= 15000) {
-    totalAdultCost += totalAdultCost * 0.2; // +20%
-  } else if (totalAdultCost <= 25000) {
-    totalAdultCost += totalAdultCost * 0.18; // +18%
-  } else if (totalAdultCost <= 35000) {
-    totalAdultCost += totalAdultCost * 0.16; // +16%
-  } else {
-    totalAdultCost += totalAdultCost * 0.15; // +15%
-  }
+  // ✅ Add user-defined markup directly
+totalAdultCost += markup;
+
   //Storecalculated prices in the global variable
   window.finalPrices = {
     totalAdultCost,
